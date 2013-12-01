@@ -1,0 +1,49 @@
+.card{
+	margin-left: 10px;
+	margin-right: 10px;
+	float: left;
+}
+
+.hand-card{
+	margin-left: 10px;
+	margin-right: 10px;
+	float: left;
+}
+
+#dominion-board{
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#player-name{
+}
+
+
+#kingdom-cards{
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
+}
+
+#supply-cards{
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
+}
+
+#hand{
+	margin-left: 10px;
+	margin-right: 10px;
+	overflow: hidden;
+}
+
+#popup{
+	display: none; 
+	position: absolute; 
+	left: 100px; 
+	top: 50px; 
+	border: solid black 1px; 
+	padding: 10px; 
+	font-size: 12px; 
+	width: 135px;
+}
