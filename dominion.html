@@ -12,9 +12,11 @@
 
         <link rel="stylesheet" href="css/normalize.min.css">
         <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/dominion.css">
 
         <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
         <script src="js/vendor/jquery-1.10.1.min.js"></script>
+        <script src="js/vendor/angular.min.js"></script>
         <script src="js/lib.js"></script>
         <script src="js/cards.js"></script>
         <script src="js/dominion.js"></script>
@@ -24,33 +26,36 @@
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
-        <div class="header-container">
-            <header class="wrapper clearfix">
-                <h1 class="title">h1.title</h1>
-                <nav>
-                    <ul>
-                        <li><a href="#">nav ul li a</a></li>
-                        <li><a href="#">nav ul li a</a></li>
-                        <li><a href="#">nav ul li a</a></li>
-                    </ul>
-                </nav>
-            </header>
-        </div>
-
         <div class="main-container">
             <div class="main wrapper clearfix">
                 <h1>Dominion Board</h1>
                 <div id="dominion-test">
-                    <div id="dominion-board"></div>
+                    <div id="player-name"></div>
+                    <div id="dominion-board">
+                        <div id='popup'>
+                            <span id="popup-close"><p>X</p></span>
+                            <span id='popup-text'></span>
+                        </div>
+                        <div id="kingdom-cards"></div>
+                        <div id="supply-cards"></div>
+                        <div id="buttons">
+                            <button id="end-action">End action</button>
+                            <button id="play-coins">Play Coins</button>
+                            <div id="info">
+                                <p>Actions: <span id="num-actions"></span></p>
+                                <p>Buys: <span id="num-buys"></span></p>
+                                <p>Coins <span id="num-coins"></span></p>
+                            </div>
+                            <div id="card-effects">
+                            </div>
+                        </div>
+                        <div id="hand">
+                            <p>HAND</p>
+                        </div>
+                    </div>
                 </div>
             </div> <!-- #main -->
         </div> <!-- #main-container -->
-
-        <div class="footer-container">
-            <footer class="wrapper">
-                <h3>footer</h3>
-            </footer>
-        </div>
 
 <!--
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
