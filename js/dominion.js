@@ -1,5 +1,4 @@
 (function(){
-
 	function printDecks(player){
 		console.log("player deck: "+player.deck);
 		console.log("player hand: "+player.hand);
@@ -8,157 +7,6 @@
 	}
 
 	var board;
-	/**
-	 * Dominion Card Object
-	 * name: Name of card (String)
-	 * cost: cost of the card (Number)
-	 * actions: Type of actions the card can have (Action object)
-	 			If action doesn't exist put as null
-	 * makeAction: create an action for the card;
-	 */
-
-	 function Card(name, cost, description){
-	 	if (name === undefined) {name = ""};
-	 	if (cost === undefined) {cost = 0};
-	 	this.name = name;
-	 	this.cost = cost;
-	 	this.description = description;
-	 	//Number of cards on the board at the start of the game
-	 	this.numberPerGame = {"2": 10, "3": 10, "4": 10, "5": 10, "6": 10};
-	 	//Make default actions empty functions
-	 	this.actions = this.makeAction(null, null, null, null, null, null);
-
-	 	//Marks card as the type of card it is
-	 	//Useful for game purposes so that you don't have to run empty functions
-	 	this.hasAction = false;
-	 	this.hasCoin = false;
-	 	this.hasBuy = false;
-	 	this.hasTrashed = false;
-	 	this.hasReaction = false;
-	 	this.hasAttack = false;
-	 	this.hasScore = false;
-	 	this.isBasicCoin = false;
-	 }
-	/**
-	 * Input: onAction - function that describes what to do during the action phase
-	 		  onCoin - function that describes what to do during the buy phase
-	 		  onBuy - function that describes what to do when first purchased
-	 		  onTrashed - function that describes what to do when it's trashed
-	 		  onReaction - function that describes action during the reaction phase
-	 		  onScore - function that describes what to do when scoring
-
-	 * Description: for each potential action, make a dummy action if the action
-	 * 				doesn't exist. Else set the action object
-	 */
-	Card.prototype.makeAction = function(onAction, onCoin, onBuy, onTrashed, onReaction, onScore){
-		//Set default function for parameters if they are undefined
-		onAction = makeActionHelper(onAction, this.hasAction);
-		onCoin = makeActionHelper(onCoin, this.hasCoin);
-		onBuy = makeActionHelper(onBuy, this.hasBuy);
-		onTrashed = makeActionHelper(onTrashed, this.hasTrashed);
-		onReaction = makeActionHelper(onReaction, this.hasReaction);
-		onScore = makeActionHelper(onScore, this.hasScore);
-		//set the action object
-		return {
-					"onAction": onAction,
-					"onCoin": onCoin,
-					"onBuy": onBuy,
-					"onTrashed": onTrashed,
-					"onReaction": onReaction,
-					"onScore": onScore
-				};
-	};
-
-	Card.prototype.removeInfoText = function(){
-		var el = document.getElementById('popup');
-		el.style.display = "none";
-	}
-
-	Card.prototype.addInfoText = function(event, cardDescript){
-		var el, x, y;
-		el = document.getElementById('popup');
-		if (window.event) {
-			x = window.event.clientX + document.documentElement.scrollLeft
-				+ document.body.scrollLeft;
-			y = window.event.clientY + document.documentElement.scrollTop +
-				+ document.body.scrollTop;
-		}
-		else {
-			x = event.clientX + window.scrollX;
-			y = event.clientY + window.scrollY;
-		}
-		x -= 2; 
-		y -= 2;
-		y = y+15
-		el.style.left = x + "px";
-		el.style.top = y + "px";
-		el.style.display = "block";
-		el.style.position = "absolute";
-		document.getElementById('popup-text').innerHTML = cardDescript;	
-		$("#popup-close").click(this.removeInfoText);
-	}
-
-	Card.prototype.onObjectBuy = function(event, cardObj){
-		if (board.possPhases[board.currentPhase] === "buy"){
-			var player = board.players[board.turn];
-			if (player.canBuyCard(cardObj)){
-				player.incrementBuys(-1);
-				player.incrementCoins(-cardObj.cost);
-				player.usedCards.push(cardObj.name);
-			}
-			if (player.numBuys <= 0){
-				board.endTurn();
-			}
-		}
-	}
-
-	Card.prototype.onObjectPlay = function(event, cardObj, index){
-		if (board.possPhases[board.currentPhase] === "action"){
-			var player = board.players[board.turn];
-			if (cardObj.hasAction && player.numActions > 0){
-				cardObj.actions["onAction"](player);
-				player.removeCardFromHand(cardObj.name, index, 
-								  		  player.usedCards);
-			}
-		}
-		console.log(this.name);
-	}
-
-	Card.prototype.onObjectPlayEnd = function(){
-		var player = board.players[board.turn];
-		if (player.numActions <= 0){
-			board.endAction();
-		}
-	}
-
-	Card.prototype.onObjectCoin = function(event, cardObj, index){
-		if (board.possPhases[board.currentPhase] === "buy"){
-			var player = board.players[board.turn];
-			if (cardObj.hasCoin){
-				cardObj.actions["onCoin"](player);
-				player.removeCardFromHand(cardObj.name, index, 
-										  player.usedCards);
-			}
-		}
-	}
-
-
-	/**
-	 * Input: onFunction - a function, null type, or undefined type
-	 * Description: If there is a function for the action, tell the card that
-	 * 				the action exists and return the function. Else create an
-	 *				empty function
-	 */
-	function makeActionHelper(onFunction, hasFunction){
-		if (onFunction === null || onFunction === undefined){
-			hasFunction = false;
-			return function(){return};
-		}
-		else{
-			hasFunction = true;
-			return onFunction;
-		}
-	}
 
 	var kingdomCardList = ["cellar", "chapel", "moat", "chancellor",
 						   "village", "woodcutter", "workshop", "bureaucrat",
@@ -209,7 +57,7 @@
 	function makeCurse(){
 		var curseDescription = "-1 victory point";
 		var curse = new Card("curse", 0, curseDescription);
-		curse.numberPerGame = {"2": 10, "3": 20, "4": 30, "5": 40, "6": 50};
+		curse.numberPerGame = {"1": 10, "2": 10, "3": 20, "4": 30, "5": 40, "6": 50};
 		curse.actions["onScore"] = function(player){
 										player.incrementScore(-1);
 										return true;
@@ -223,7 +71,7 @@
 	function makeEstate(){
 		var estateDescription = "1 victory point";
 		var estate = new Card("estate", 2, estateDescription);
-		estate.numberPerGame = {"2": 8, "3": 12, "4": 12, "5": 12, "6": 12};
+		estate.numberPerGame = {"1": 8, "2": 8, "3": 12, "4": 12, "5": 12, "6": 12};
 		estate.actions["onScore"] = function(player){
 										player.incrementScore(1);
 										return true;
@@ -235,7 +83,7 @@
 	function makeDuchy(){
 		var duchyDescription = "3 victory points";
 		var duchy = new Card("duchy", 5, duchyDescription);
-		duchy.numberPerGame = {"2": 8, "3": 12, "4": 12, "5": 12, "6": 12};
+		duchy.numberPerGame = {"1": 8, "2": 8, "3": 12, "4": 12, "5": 12, "6": 12};
 		duchy.actions["onScore"] = function(player){
 										player.incrementScore(3);
 										return true;
@@ -246,8 +94,8 @@
 
 	function makeProvince(){
 		var provinceDescription = "6 victory points";
-		var province = new Card("province", 8, estateDescription);
-		province.numberPerGame = {"2": 8, "3": 12, "4": 12, "5": 15, "6": 18};
+		var province = new Card("province", 8, provinceDescription);
+		province.numberPerGame = {"1": 8, "2": 8, "3": 12, "4": 12, "5": 15, "6": 18};
 		province.actions["onScore"] = function(player){
 										player.incrementScore(6);
 										return true;
@@ -259,7 +107,7 @@
 	function makeCopper(){
 		var copperDescription = "1 coin";
 		var copper = new Card("copper", 0, copperDescription);
-		copper.numberPerGame = {"2": 46, "3": 39, "4": 32, "5": 85, "6": 78};
+		copper.numberPerGame = {"1": 53, "2": 46, "3": 39, "4": 32, "5": 85, "6": 78};
 		copper.actions["onCoin"] = function(player){
 									   		player.incrementCoins(1);
 									   		return true;
@@ -273,7 +121,7 @@
 	function makeSilver(){
 		var silverDescription = "2 coins";
 		var silver = new Card("silver", 3, silverDescription);
-		silver.numberPerGame = {"2": 40, "3": 40, "4": 40, "5": 80, "6": 80};
+		silver.numberPerGame = {"1": 40, "2": 40, "3": 40, "4": 40, "5": 80, "6": 80};
 		silver.actions["onCoin"] = function(player){
 									   		player.incrementCoins(2);
 									   		return true;
@@ -286,7 +134,7 @@
 	function makeGold(){
 		var goldDescription = "3 coins";
 		var gold = new Card("gold", 6, goldDescription);
-		gold.numberPerGame = {"2": 30, "3": 30, "4": 30, "5": 60, "6": 60};
+		gold.numberPerGame = {"1": 30, "2": 30, "3": 30, "4": 30, "5": 60, "6": 60};
 		gold.actions["onCoin"] = function(player){
 									   		player.incrementCoins(3);
 									   		return true;
@@ -303,7 +151,7 @@
 		cellar.actions["onAction"] = cellarOnAction;
 
 		//cardList elem = [name, id]
-		function onDoneButton(cardList){
+		function onDoneButton(player, cardList){
 			var player = board.players[board.turn];
 			var hand = player.hand;
 			var numToDraw = 0;
@@ -318,15 +166,15 @@
 			cellar.onObjectPlayEnd();
 		}
 
-		function isValidSolution(cardList){
+		function isValidSolution(player, cardList){
 			return true;
 		}
 
-		function cellarOnAction(player){
-			if (player.numActions > 0){
-				player.addSelectCardsDom(isValidSolution, onDoneButton);
-				return true;
-			}
+		function cellarOnAction(player, index){
+			var question = "Choose the cards you want to discard"
+			player.incrementActions(1);
+			player.addSelectCardsDom(question, isValidSolution, onDoneButton);
+			return true;
 		}
 
 		cellar.hasAction = true;
@@ -339,7 +187,7 @@
 		chapel.actions["onAction"] = chapelOnAction;
 
 		//cardList elem = [name, id]
-		function onDoneButton(cardList){
+		function onDoneButton(player, cardList){
 			var player = board.players[board.turn];
 			var hand = player.hand;
 			var numToDraw = 0;
@@ -351,17 +199,15 @@
 			chapel.onObjectPlayEnd();
 		}
 
-		function isValidSolution(cardList){
+		function isValidSolution(player, cardList){
 			var len = cardList.length;
 			return (len <= 4);
 		}
 
-		function chapelOnAction(player){
-			if (player.numActions > 0){
-				player.incrementActions(-1);
-				player.addSelectCardsDom(isValidSolution, onDoneButton);
-				return true;
-			}
+		function chapelOnAction(player, index){
+			var question = "Choose up to 4 cards to trash";
+			player.addSelectCardsDom(question, isValidSolution, onDoneButton);
+			return true;
 		}
 
 		chapel.hasAction = true;
@@ -380,6 +226,25 @@
 		var chancellorDescription = "+2 coin. You may immediately put your deck "+
 							"into your discard pile";
 		var chancellor = new Card("chancellor", 3, chancellorDescription);
+		chancellor.actions["onAction"] = chancellorOnAction;
+
+		function onYes(player){
+			player.discard = player.discard.concat(player.deck);
+			player.deck = [];
+			chancellor.onObjectPlayEnd();
+		}
+
+		function onNo(player){
+			chancellor.onObjectPlayEnd();		
+		}
+
+		function chancellorOnAction(player, index){
+			player.incrementCoins(2);
+			var question = "Do you want to put your deck into your discard?"
+			player.giveYesNoChoice(question, onYes, onNo);
+		}
+
+		chancellor.hasAction = true;
 		return chancellor;
 	}
 		
@@ -388,12 +253,10 @@
 		var village = new Card("village", 3, villageDescription);
 		village.actions["onAction"] = villageOnAction;
 
-		function villageOnAction(player){
-			if (player.numActions > 0){
-				player.incrementActions(1);
-				player.draw(1, true);
-				village.onObjectPlayEnd();
-			}
+		function villageOnAction(player, index){
+			player.incrementActions(2);
+			player.draw(1, true);
+			village.onObjectPlayEnd();
 		}
 
 		village.hasAction = true;
@@ -403,15 +266,12 @@
 	function makeWoodcutter(){
 		var woodcutterDescription = "+1 buy +2 coin";
 		var woodcutter = new Card("woodcutter", 3, woodcutterDescription);
-		woodcutter.actions["onAction"] = villageOnAction;
+		woodcutter.actions["onAction"] = woodcutterOnAction;
 
-		function villageOnAction(player){
-			if (player.numActions > 0){
-				player.incrementActions(-1);
-				player.incrementBuys(1);
-				player.incrementCoins(2);
-				woodcutter.onObjectPlayEnd();
-			}
+		function woodcutterOnAction(player, index){
+			player.incrementBuys(1);
+			player.incrementCoins(2);
+			woodcutter.onObjectPlayEnd();
 		}
 
 		woodcutter.hasAction = true;
@@ -421,6 +281,35 @@
 	function makeWorkshop(){
 		var workshopDescription = "gain a card costing up to 4";
 		var workshop = new Card("workshop", 3, workshopDescription);
+		workshop.actions["onAction"] = workshopOnAction;
+
+		//cardList elem = [name, id]
+		function onCardClick(player, cardList){
+			var cardObj = getCurrCardObj(cardList[0])["object"];
+			cardObj.onObjectGain(player, cardObj);
+			workshop.onObjectPlayEnd();
+		}
+
+		function isValidSolution(player, cardList){
+			var cardObjInfo = getCurrCardObj(cardList[0]);
+			if (!(cardObjInfo === null)){
+				var cardObj = cardObjInfo["object"];
+				if (cardObjInfo["numberLeft"] > 0 && cardObj.cost <= 4){
+					return true;
+				}
+				return false;
+			}
+		}
+
+		function workshopOnAction(player, index){
+			var question = "Choose a card costing 4 or less to gain";
+			player.addSelectSingleCardDom(question, isValidSolution,
+										  onCardClick, "card");
+			return true;
+		}
+
+		workshop.hasAction = true;
+
 		return workshop;
 	}
 		
@@ -436,6 +325,42 @@
 	function makeFeast(){
 		var feastDescription = "trash this card. Gain a card costing up to 5 coins";
 		var feast = new Card("feast", 4, feastDescription);
+		feast.actions["onAction"] = feastOnAction;
+
+		//cardList elem = [name, id]
+		function onCardClick(player, cardList){
+			var cardObj = getCurrCardObj(cardList[0])["object"];
+			cardObj.onObjectGain(player, cardObj);
+			feast.onObjectPlayEnd();
+		}
+
+		function isValidSolution(player, cardList){
+			var cardObjInfo = getCurrCardObj(cardList[0]);
+			if (!(cardObjInfo === null)){
+				var cardObj = cardObjInfo["object"];
+				if (cardObjInfo["numberLeft"] > 0 && cardObj.cost <= 5){
+					return true;
+				}
+			}
+			return false;
+		}
+
+		function feastOnAction(player, index){
+			var question = "Choose a card that costs up to 5";
+			for (var i=0; i<player.usedCards.length; i++){
+				if(player.usedCards[i] === "feast"){
+					player.usedCards.splice(i,1);
+					break;
+				}
+			}
+			player.addSelectSingleCardDom(question, isValidSolution,
+										  onCardClick, "card");
+			return true;
+		}
+
+		feast.hasAction = true;
+
+
 		return feast;
 	}
 
@@ -443,7 +368,7 @@
 		var gardensDescription = "worth one victory point for every 10 cards in "+
 								 "your deck (rounded down)";
 		var gardens = new Card("gardens", 4, gardensDescription);
-		gardens.numberPerGame = {"2": 8, "3": 12, "4": 12, "5": 12, "6": 12};
+		gardens.numberPerGame = {"1": 8, "2": 8, "3": 12, "4": 12, "5": 12, "6": 12};
 		gardens.actions["onScore"] = gardensOnScore;
 		
 		function gardensOnScore(player){
@@ -469,6 +394,32 @@
 		var moneylenderDescription = "Trash a copper from your hand. If you do "+
 									 "+3 coins";
 		var moneylender = new Card("moneylender", 4, moneylenderDescription);
+		moneylender.actions["onAction"] = moneylenderOnAction;
+
+		function isValidSolution(player, cardInfo){
+			if (cardInfo[0] === "copper"){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+
+		function onCardClick(player, cardInfo){
+			player.removeCardFromHand(cardInfo[0], cardInfo[1], board.trash);
+			player.incrementCoins(3);
+			moneylender.onObjectPlayEnd();
+		}
+
+		function moneylenderOnAction(player, index){
+			var question = "Trash a copper from your hand";
+			player.addSelectSingleCardDom(question, isValidSolution,
+										  onCardClick, "hand-card");
+			return true;
+		}
+
+		moneylender.hasAction = true;
+
 		return moneylender;
 	}
 
@@ -476,6 +427,42 @@
 		var remodelDescription = "Trash a card from your hand. Gain a card "+
 								 "costing up to two more than the trashed card";
 		var remodel = new Card("remodel", 4, remodelDescription);
+		remodel.actions["onAction"] = remodelOnAction;
+
+		//cardList elem = [name, id]
+		function onCardClick(player, cardList){
+			var cardObjInfo = getCurrCardObj(cardList[0]);
+			cardObjInfo["numberLeft"] -= 1;
+			player.discard.push(cardList[0]);
+			feast.onObjectPlayEnd();
+		}
+
+		function isValidSolution(player, cardList){
+			var cardObjInfo = getCurrCardObj(cardList[0]);
+			if (!(cardObjInfo === null)){
+				var cardObj = cardObjInfo["object"];
+				if (cardObjInfo["numberLeft"] > 0 && cardObj.cost <= 5){
+					return true;
+				}
+			}
+			return false;
+		}
+
+		function remodelOnAction(player, index){
+			var question = "Choose a card that costs up to 5";
+			for (var i=0; i<player.usedCards.length; i++){
+				if(player.usedCards[i] === "feast"){
+					player.usedCards.splice(i,1);
+					break;
+				}
+			}
+			player.addSelectSingleCardDom(question, isValidSolution,
+										  onCardClick, "card");
+			return true;
+		}
+
+		remodel.hasAction = true;
+
 		return remodel;
 	}
 
@@ -485,13 +472,10 @@
 
 		smithy.actions["onAction"] = smithyOnAction;
 
-		function smithyOnAction(player){
-			if (player.numActions > 0){
-				player.draw(3, true);
-				player.incrementActions(-1);
-				smithy.onObjectPlayEnd();
-				return true;
-			}
+		function smithyOnAction(player, index){
+			player.draw(3, true);
+			smithy.onObjectPlayEnd();
+			return true;
 		}
 
 		smithy.hasAction = true;
@@ -535,14 +519,12 @@
 		var festival = new Card("festival", 5, festivalDescription);
 		festival.actions["onAction"] = festivalOnAction;
 
-		function festivalOnAction(player){
-			if (player.numActions > 0){
-				player.incrementActions(1);
-				player.incrementBuys(1);
-				player.incrementCoins(2);
-				festival.onObjectPlayEnd();
-				return true;
-			}
+		function festivalOnAction(player, index){
+			player.incrementActions(2);
+			player.incrementBuys(1);
+			player.incrementCoins(2);
+			festival.onObjectPlayEnd();
+			return true;
 		}
 
 		festival.hasAction = true;
@@ -555,12 +537,11 @@
 		var laboratory = new Card("laboratory", 5, laboratoryDescription);
 		laboratory.actions["onAction"] = laboratoryOnAction;
 
-		function laboratoryOnAction(player){
-			if (player.numActions > 0){
-				player.draw(2, true);
-				laboratory.onObjectPlayEnd();
-				return true;
-			}
+		function laboratoryOnAction(player, index){
+			player.incrementActions(1);
+			player.draw(2, true);
+			laboratory.onObjectPlayEnd();
+			return true;
 		}
 
 		laboratory.hasAction = true;
@@ -583,14 +564,13 @@
 		var market = new Card("market", 5, marketDescription);
 		market.actions["onAction"] = marketOnAction;
 
-		function marketOnAction(player){
-			if (player.numActions > 0){
-				player.draw(1, true);
-				player.incrementBuys(1);
-				player.incrementCoins(1);
-				market.onObjectPlayEnd();
-				return true;
-			}
+		function marketOnAction(player, index){
+			player.draw(1, true);
+			player.incrementActions(1);
+			player.incrementBuys(1);
+			player.incrementCoins(1);
+			market.onObjectPlayEnd();
+			return true;
 		}
 
 		market.hasAction = true;
@@ -602,12 +582,49 @@
 							  "a treasure card costing up to 3 coins more; "+
 							  "put it into your hand";
 		var mine = new Card("mine", 5, mineDescription);
+		mine.actions["onAction"] = mineOnAction;
+
+		//cardList elem = [name, id]
+		function onCardClick(player, cardList){
+			var cardObjInfo = getCurrCardObj(cardList[0]);
+			cardObjInfo["numberLeft"] -= 1;
+			player.discard.push(cardList[0]);
+			workshop.onObjectPlayEnd();
+		}
+
+		function isValidSolution(player, cardList){
+			var cardObjInfo = getCurrCardObj(cardList[0]);
+			if (!(cardObjInfo === null)){
+				var cardObj = cardObjInfo["object"];
+				if (cardObjInfo["numberLeft"] > 0 && cardObj.cost <= 4){
+					return true;
+				}
+			}
+			return false;
+		}
+
+		function mineOnAction(player, index){
+			var question = "Choose a treasure card that costs up to 3 coins more";
+			player.addSelectSingleCardDom(question, isValidSolution,
+										  onCardClick, "card");
+			return true;
+		}
+
+		mine.hasAction = true;
+
 		return mine;
 	}
 
 	function makeWitch(){
 		var witchDescription = "+2 cards. Each other player gains a curse card.";
 		var witch = new Card("witch", 5, witchDescription);
+
+		witch.actions["onAction"] = witchOnAction;
+
+		function witchOnAction(player, index){
+		}
+
+		witch.hasAction = true;
 		return witch;
 	}
 
@@ -617,7 +634,217 @@
 									"treasure cards into your hand and discard "+
 									"the other revealed cards";
 		var adventurer = new Card("adventurer", 5, adventurerDescription);
+		adventurer.actions["onAction"] = adventurerOnAction;
+
+		function adventurerOnAction(player, index){
+			var count = 0;
+			var revealedCards = [];
+			while(count < 2){
+				var newCardList = player.pullFromDeck(1);
+				if (newCardList.length === 0){
+					break;
+				}
+				var newCard = newCardList[0];
+				var cardObj = getCurrCardObj(newCard)["object"];
+				if (cardObj.hasCoin){
+					count+=1;
+					player.hand.push(newCard);
+					player.makePlayerDom();
+				}
+				else{
+					revealedCards.push(newCard);
+				}
+			}
+			player.discard = player.discard.concat(revealedCards);
+			adventurer.onObjectPlayEnd();
+		}
+
+		adventurer.hasAction = true;
+
 		return adventurer;
+	}
+
+	/**
+	 * Dominion Card Object
+	 * name: Name of card (String)
+	 * cost: cost of the card (Number)
+	 * actions: Type of actions the card can have (Action object)
+	 			If action doesn't exist put as null
+	 * makeAction: create an action for the card;
+	 */
+
+	 function Card(name, cost, description){
+	 	if (name === undefined) {name = ""};
+	 	if (cost === undefined) {cost = 0};
+	 	this.name = name;
+	 	this.cost = cost;
+	 	this.description = description;
+	 	//Number of cards on the board at the start of the game
+	 	this.numberPerGame = {"1": 10, "2": 10, "3": 10, "4": 10, "5": 10, "6": 10};
+	 	//Make default actions empty functions
+	 	this.actions = this.makeAction(null, null, null, null, null, null);
+
+	 	//Marks card as the type of card it is
+	 	//Useful for game purposes so that you don't have to run empty functions
+	 	this.hasAction = false;
+	 	this.hasCoin = false;
+	 	this.hasBuy = false;
+	 	this.hasTrashed = false;
+	 	this.hasReaction = false;
+	 	this.hasAttack = false;
+	 	this.hasScore = false;
+	 	this.isBasicCoin = false;
+	 }
+	/**
+	 * Input: onAction - function that describes what to do during the action phase
+	 		  onCoin - function that describes what to do during the buy phase
+	 		  onBuy - function that describes what to do when first purchased
+	 		  onTrashed - function that describes what to do when it's trashed
+	 		  onReaction - function that describes action during the reaction phase
+	 		  onScore - function that describes what to do when scoring
+
+	 * Description: for each potential action, make a dummy action if the action
+	 * 				doesn't exist. Else set the action object
+	 */
+	Card.prototype.makeAction = function(onAction, onCoin, onBuy, onTrashed, onReaction, onScore){
+		//Set default function for parameters if they are undefined
+		onAction = makeActionHelper(onAction, this.hasAction);
+		onCoin = makeActionHelper(onCoin, this.hasCoin);
+		onBuy = makeActionHelper(onBuy, this.hasBuy);
+		onTrashed = makeActionHelper(onTrashed, this.hasTrashed);
+		onReaction = makeActionHelper(onReaction, this.hasReaction);
+		onScore = makeActionHelper(onScore, this.hasScore);
+		//set the action object
+		return {
+					"onAction": onAction,
+					"onCoin": onCoin,
+					"onBuy": onBuy,
+					"onTrashed": onTrashed,
+					"onReaction": onReaction,
+					"onScore": onScore
+				};
+	};
+
+	Card.prototype.removeInfoText = function(){
+		var el = document.getElementById('popup');
+		el.style.display = "none";
+	}
+
+	Card.prototype.generateInfoText = function(){
+		var name = this.name;
+		var cost = this.cost;
+		var numLeft = getCurrCardObj(name)["numberLeft"];
+		var descript = this.description;
+		var text = "<p><b>Name:</b> "+name+"<br>"+"<b>Cost:</b> "+cost+"<br>"+
+				   "<b>Number Left:</b> "+numLeft+"<br>"+"<b>Description:</b> "+
+				   descript+"</p>";
+		return text;
+	}
+
+	Card.prototype.addInfoText = function(event, cardObj){
+		var el, x, y;
+		el = document.getElementById('popup');
+		if (window.event) {
+			x = window.event.clientX + document.documentElement.scrollLeft
+				+ document.body.scrollLeft;
+			y = window.event.clientY + document.documentElement.scrollTop +
+				+ document.body.scrollTop;
+		}
+		else {
+			x = event.clientX + window.scrollX;
+			y = event.clientY + window.scrollY;
+		}
+		x -= 2; 
+		y -= 2;
+		y = y+15
+		el.style.left = x + "px";
+		el.style.top = y + "px";
+		el.style.display = "block";
+		el.style.position = "absolute";
+		var infoText = cardObj.generateInfoText();
+		document.getElementById('popup-text').innerHTML = infoText;	
+		$("#popup-close").click(this.removeInfoText);
+	}
+
+	Card.prototype.onObjectGain = function(player, cardObj){
+		var cardObjInfo = getCurrCardObj(cardObj.name);
+		if (cardObjInfo["numberLeft"] > 0){
+			cardObjInfo["numberLeft"] -= 1;
+			player.discard.push(cardObj.name);
+			if (cardObjInfo["numberLeft"]===0){
+				$("#"+cardObj.name).css("color", "gray");
+			}
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	Card.prototype.onObjectBuy = function(event, cardObj){
+		if (board.possPhases[board.currentPhase] === "buy"){
+			var player = board.players[board.turn];
+			if (player.canBuyCard(cardObj)){
+				if(this.onObjectGain(player, cardObj)){
+					player.incrementBuys(-1);
+					player.incrementCoins(-cardObj.cost);
+				}
+			}
+			if (player.numBuys <= 0){
+				board.endTurn();
+			}
+		}
+	}
+
+	Card.prototype.onObjectPlay = function(event, cardObj, index){
+		if (board.possPhases[board.currentPhase] === "action"){
+			var player = board.players[board.turn];
+			if (cardObj.hasAction && player.numActions > 0){
+				player.removeCardFromHand(cardObj.name, index, 
+								  		  player.usedCards);
+				if (player.numActions > 0){
+					player.incrementActions(-1);
+					cardObj.actions["onAction"](player, index);
+				}				
+			}
+		}
+		console.log(this.name);
+	}
+
+	Card.prototype.onObjectPlayEnd = function(){
+		var player = board.players[board.turn];
+		if (player.numActions <= 0){
+			board.endAction();
+		}
+	}
+
+	Card.prototype.onObjectCoin = function(event, cardObj, index){
+		if (board.possPhases[board.currentPhase] === "buy"){
+			var player = board.players[board.turn];
+			if (cardObj.hasCoin){
+				cardObj.actions["onCoin"](player);
+				player.removeCardFromHand(cardObj.name, index, 
+										  player.usedCards);
+			}
+		}
+	}
+
+
+	/**
+	 * Input: onFunction - a function, null type, or undefined type
+	 * Description: If there is a function for the action, tell the card that
+	 * 				the action exists and return the function. Else create an
+	 *				empty function
+	 */
+	function makeActionHelper(onFunction, hasFunction){
+		if (onFunction === null || onFunction === undefined){
+			hasFunction = false;
+			return function(){return};
+		}
+		else{
+			hasFunction = true;
+			return onFunction;
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -696,55 +923,39 @@
 		}
 	}
 
-	/**
-	 * Input: the number of cards the player wants to draw
-	 * Description: draws numberOfCards. If the number of cards is less than
-	 * 				number of cards in the deck draw from discard
-	 */
-	Player.prototype.draw = function(numOfCards, drawDom){
+	Player.prototype.pullFromDeck = function(numOfCards){
 		var deckLen = this.deck.length;
+		var newCards = [];
 		//If enough cards just draw numOfCards
 		if (deckLen >= numOfCards){
-			var newCards = popMultiple(this.deck, numOfCards);
+			newCards = popMultiple(this.deck, numOfCards);
 		}
 		//If not enough then draw everything in deck, make discard the new deck
 		//and draw some more
 		else{
 			var restOfCards = numOfCards - deckLen;
 			//Maybe this is wrong. Is newCards a pointer or array?
-			var newCards = this.deck;
+			newCards = this.deck;
 			this.deck = this.discard;
 			this.discard = [];
 			this.shuffleDeck();
 			newCards = newCards.concat(popMultiple(this.deck, restOfCards));
 		}
+		return newCards;		
+	}
+
+	/**
+	 * Input: the number of cards the player wants to draw
+	 * Description: draws numberOfCards. If the number of cards is less than
+	 * 				number of cards in the deck draw from discard
+	 */
+	Player.prototype.draw = function(numOfCards, drawDom){
+		var newCards = this.pullFromDeck(numOfCards);
 		this.hand = this.hand.concat(newCards);	
 		if (!(drawDom === false)){
 			this.makePlayerDom();
 		}
 	};
-
-/*
-	//Doesn't handle reactions currently
-	Player.prototype.playCard = function(card, board){
-		if (board.players[board.turn] != this.name){
-			return;
-		}
-		else{
-			if (board.possPhases[board.currentPhase] === "action" && card.hasAction){
-				card.actions[onAction](this);
-				//If card has an attack you want to let other players play
-				//Reactions. Do this later.
-				if (card.hasAttack){
-
-				}
-			}
-			else if (board.currentPhase === "buy" && card.hasCoin){
-				card.actions[onAction](this);
-			}
-		}
-	}
-*/
 
 	Player.prototype.trashCard = function(card, board){
 		if (card.hasTrashed){
@@ -825,15 +1036,68 @@
 
 	}
 
+	Player.prototype.giveYesNoChoice = function(question, onYes, onNo){
+		$(".hand-card").removeClass("active-card");
+		var player = this;
+		var questionDom = "<p id='question'>"+question+"</p>";
+		var yesDom = "<span id='yes-question'><p>Yes</p></span>";
+		var noDom = "<span id='no-question'><p>No</p></span>";
+		$("#card-effects").append(questionDom);
+		$("#card-effects").append(yesDom);
+		$("#card-effects").append(noDom);
+		$("#yes-question").click(function(event){
+			onYes(player);
+			$("#yes-question").unbind("click");
+			$("#no-question").unbind("click");
+			$("#question").remove();
+			$("#yes-question").remove();
+			$("#no-question").remove();
+			$(".hand-card").addClass("active-card");
+		});
+		$("#no-question").click(function(event){
+			onNo(player);
+			$("#yes-question").unbind("click");
+			$("#no-question").unbind("click");
+			$("#question").remove();
+			$("#yes-question").remove();
+			$("#no-question").remove();
+			$(".hand-card").addClass("active-card");
+		})
+	}
+
 	function getParagraphText(elem){
 		return elem.substring(elem.lastIndexOf("<p>")+3,
 					   		  elem.lastIndexOf("</p>"));
 	}
 
-	Player.prototype.addSelectCardsDom = function(checkValidSol, onDoneButton){
+	Player.prototype.addSelectSingleCardDom = function(question, checkValidSol, onCardClick, 
+													   cardsClass){
+		var player = this;
+		var questionDom = "<p id='question'>"+question+"</p>";
+		$("#card-effects").append(questionDom);
+		$(".hand-card").removeClass("active-card");
+		$("."+cardsClass).addClass("select-one-card");
+		$(".select-one-card").click(function(event){
+			var cardName = getParagraphText(this.innerHTML);
+			var cardId = this.id;
+			var cardInfo = [cardName, cardId];
+			if (checkValidSol(player, cardInfo)){
+				onCardClick(player, cardInfo);
+				$(".select-one-card").unbind("click");
+				$("."+cardsClass).removeClass(".select-one-card");
+				$("#question").remove();
+				$(".hand-card").addClass("active-card");
+			}
+		})
+	}
+
+	Player.prototype.addSelectCardsDom = function(question, checkValidSol, onDoneButton){
+		var questionDom = "<p id='question'>"+question+"</p>";
+		$("card-effects").append(questionDom);
 		$(".hand-card").removeClass("active-card");
 		var checkBox = $('<input type="checkbox" class="hand-checkbox">');
 		var doneButton = $('<button id="done-button">Done</button>');
+		var player = this;
 		$(".hand-card").append(checkBox);
 		$("#card-effects").append(doneButton);
 		$("#done-button").click(function(event){
@@ -845,10 +1109,13 @@
 				elem = getParagraphText(elem);
 				checkedCards.push([elem, checkedDiv.id]);
 			}
-			if (checkValidSol(checkedCards)){
-				onDoneButton(checkedCards);
+			if (checkValidSol(player, checkedCards)){
+				onDoneButton(player, checkedCards);
+				$("#done-button").unbind("click");
+				$(".hand-checkbox").unbind("click");
 				$("#done-button").remove();
 				$(".hand-checkbox").remove();
+				$("#question").remove();
 				$(".hand-card").addClass("active-card");
 			}			
 		});
@@ -887,15 +1154,20 @@
 	//THIS IS THE CLEANUP PHASE
 	Board.prototype.endTurn = function(){
 		var currPlayer = board.players[board.turn];
-		currPlayer.resetSelf();
-		board.currentPhase = 0;
-		board.turn = (board.turn+1)%board.players.length;
-		board.players[board.turn].makePlayerDom();
-		$("#play-coins").hide();
-		$("#end-turn").html("End Action");
-		$("#end-turn").prop("id", "end-action");
-		$("#player-name").html(board.players[board.turn].name);
-		printDecks(board.players[board.turn]);
+		if (board.gameOver()){
+			board.calculateVictor();
+		}
+		else{
+			currPlayer.resetSelf();
+			board.currentPhase = 0;
+			board.turn = (board.turn+1)%board.players.length;
+			board.players[board.turn].makePlayerDom();
+			$("#play-coins").hide();
+			$("#end-turn").html("End Action");
+			$("#end-turn").prop("id", "end-action");
+			$("#player-name").html(board.players[board.turn].name);
+			printDecks(board.players[board.turn]);
+		}
 	}
 
 	function getCurrCardObj(card){
@@ -936,6 +1208,10 @@
 		return;
 	}
 
+	Board.prototype.removeCardCopy = function(cardName, number){
+		var cardObj = getCurrCardObj(cardName);
+	}
+
 	function makeCardInfo(cardName, numPlayers){
 		var cardObject = createCardObject[cardName]();
 		return {
@@ -955,6 +1231,7 @@
 			cardObject[cardNames[i]] = makeCardInfo(cardNames[i], 
 									   this.players.length);
 		}
+		console.log(cardObject);
 		return cardObject;
 	}
 
@@ -967,26 +1244,17 @@
 		return cardObject;
 	}
 
-	function startDrawingGame(playerArray, dominionBoard){
-		for (var i=0; i<playerArray.length; i++){
-			var playerDiv = "<div id="+playerArray[i].name+">"+playerArray[i].name+"</div>";
-		}
-		for (var i=0; i<dominionBoard.kingdomCards.length; i++){
-			$("#dominion-board").append(dominionBoard.kingdomCards[i]);
-		}
-	}
-
-	function gameNotOver(board){
+	Board.prototype.gameOver = function(){
 		var emptyPiles = 0;
 		for (var card in board.kingdomCards){
 			if (board.kingdomCards.hasOwnProperty(card)){
-				if (kingdomCards[card]["numberLeft"] === 0){
+				if (board.kingdomCards[card]["numberLeft"] === 0){
 					emptyPiles += 1;
 				}
 			}
 		}
 		for (var card in board.supplyCards){
-			if (board.kingdomCards.hasOwnProperty(card)){
+			if (board.supplyCards.hasOwnProperty(card)){
 				if (board.supplyCards[card]["numberLeft"] === 0){
 					emptyPiles += 1;
 				}
@@ -994,10 +1262,61 @@
 		}
 		if (board.supplyCards["province"]["numberLeft"] === 0 ||
 			emptyPiles >= 3){
-			return false;
+			return true;
 		}
 		else{
-			return true;
+			return false;
+		}
+	}
+
+	Board.prototype.calculateVictor = function(){
+		var winners = [];
+		var maxScore = -100;
+		for (var i=0; i<board.players.length; i++){
+			var player = board.players[i];
+			var allCards = player.discard.concat(player.usedCards, player.hand,
+												 player.deck);
+			for (var j=0; j<allCards.length; j++){
+				var cardObj = getCurrCardObj(allCards[j])["object"];
+				if (cardObj.hasScore){
+					cardObj.actions["onScore"](player);
+				}
+			}
+			if (player.score > maxScore){
+				winners = [player];
+				maxScore = player.score
+			}
+			else if (player.score === maxScore){
+				winners.push(player);
+			}
+		}
+
+		if (winners.length > 1){
+			var currentIndex = board.turn;
+			var superiorWinners = []
+			for (var i=board.turn+1; i<board.players.length; i++){
+				for (var j=0; j<winners.length; j++){
+					if (board.players[i].name === winners[i].name){
+						superiorWinners.push(board.players[i]);
+					}
+				}
+			}
+			if (superiorWinners.length > 0){
+				return superiorWinners;
+			}
+		}
+
+		return winners;
+
+	}
+
+
+	function startDrawingGame(playerArray, dominionBoard){
+		for (var i=0; i<playerArray.length; i++){
+			var playerDiv = "<div id="+playerArray[i].name+">"+playerArray[i].name+"</div>";
+		}
+		for (var i=0; i<dominionBoard.kingdomCards.length; i++){
+			$("#dominion-board").append(dominionBoard.kingdomCards[i]);
 		}
 	}
 
@@ -1011,7 +1330,7 @@
 
 	function createAddInfoTextHandler(cardDiv, cardObj){
 		cardDiv.addEventListener("contextmenu", (function(e){
-								 cardObj.addInfoText(e, cardObj.description)}));
+								 cardObj.addInfoText(e, cardObj)}));
 	}
 
 	function createOnObjectBuyHandler(cardDiv, cardObj){
@@ -1063,12 +1382,12 @@
 		for (var i=0; i<playerNames.length; i++){
 			var startDeck = ["estate", "estate", "estate", "copper", "copper",
 							 "copper", "copper", "copper", "copper", "copper"]
-			startDeck = ["cellar", "chapel", "moat", "chancellor",
+/*			startDeck = ["cellar", "chapel", "moat", "chancellor",
 						   "village", "woodcutter", "workshop", "bureaucrat",
 						   "feast", "gardens", "militia", "moneylender", 
 						   "remodel","smithy", "spy", "thief", "throne room",
 						   "council room", "festival", "laboratory", "library",
-						   "market", "mine", "witch", "adventurer"];
+						   "market", "mine", "witch", "adventurer", "copper"]; */
 			var newPlayer = new Player(playerNames[i], startDeck);
 			newPlayer.shuffleDeck();
 			newPlayer.draw(5, false);
