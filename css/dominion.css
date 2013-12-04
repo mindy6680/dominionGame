@@ -1,13 +1,44 @@
+#dominion-board{
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+	width: 1000px;
+	height: 500px;
+}
+
+.wrapper{
+	margin: 0px 5%;
+}
+
 .card{
-	margin-left: 10px;
-	margin-right: 10px;
 	float: left;
+	height: 84px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	margin-left: 5px;
+	margin-right: 5px;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+#supply-cards .card{
+	height: 59px;
+	width: 60px;
+}
+
+#supply-cards .card img{
+	float: left;
+	position: relative;
+	top: -32px;
+	left: -10px;
 }
 
 .hand-card{
-	margin-left: 10px;
-	margin-right: 10px;
+	position: relative;
 	float: left;
+	margin: 5px;
+	float: left;
+	cursor: pointer;
 }
 
 #dominion-board{
@@ -20,21 +51,25 @@
 
 
 #kingdom-cards{
-	margin-left: auto;
-	margin-right: auto;
+	float: left;
 	overflow: hidden;
+	width: 220px;
+	margin-right: 30px;
 }
 
 #supply-cards{
-	margin-left: auto;
-	margin-right: auto;
 	overflow: hidden;
+	width: 80px;
+	float: left;
 }
 
 #hand{
-	margin-left: 10px;
-	margin-right: 10px;
 	overflow: hidden;
+	clear: both;
+	position: relative;
+	top: 20px;
+	/* probably change this eventually */
+	width: 660px;
 }
 
 #popup{
@@ -49,8 +84,98 @@
 	background: white;
 }
 
+#info{
+	float: left;
+	top: 10px;
+	left: 20px;
+	position: relative;
+	width: 80px;
+}
+
+.info-info{
+	font-size: 16pt;
+}
+
 #popup-close{
 	float: right;
 	position: relative;
 	bottom: 20px;
+}
+
+#game-info{
+	float: left;
+	overflow-y:scroll; 
+	height:250px;
+	width: 500px;
+	word-wrap:break-word;
+	font-size: 10pt;
+}
+
+#game-info p {
+	line-height: 18px;
+}
+
+#buttons{
+	width: 100px;
+	height: 30px;
+	left: 20px;
+	position: relative;
+	top: 10px;
+	float: left;
+	clear: both;
+}
+
+#play-coins{
+	margin-top: 5px;
+}
+
+#user{
+	float: left;
+	position: relative;
+}
+
+#user-info{
+	float: left;
+	margin-left: 10px;
+}
+
+#card-effects{
+	clear: both;
+	position: relative;
+	height: 50px;
+}
+
+.card:hover{
+	/*Transition*/ -webkit-transition: all 0.1s ease; 
+	-moz-transition: all 0.1s ease; 
+	-o-transition: all 0.1s ease; 
+	 outline: 5px solid rgba(57, 147, 252, 100);
+	 /* #67E6EC */
+	}
+
+.hand-card:hover{
+		/*Transition*/ -webkit-transition: all 0.1s ease; 
+	-moz-transition: all 0.1s ease; 
+	-o-transition: all 0.1s ease; 
+	 outline: 5px solid rgba(57, 147, 252, 100);
+	 /* #67E6EC */
+	}
+}
+
+.checked, .select-one-card:hover{
+	-webkit-transition: all 0.1s ease; 
+	-moz-transition: all 0.1s ease; 
+	-o-transition: all 0.1s ease; 
+	 outline: 5px solid #FC1717;
+}
+
+#yes-question, #no-question{
+	cursor: pointer;
+}
+
+#yes-question:hover, #no-question:hover{
+	-webkit-transition: all 0.1s ease; 
+	-moz-transition: all 0.1s ease; 
+	-o-transition: all 0.1s ease; 
+	color: rgba(57, 147, 252, 100);
 }

@@ -56,7 +56,7 @@
 
 	function makeCurse(){
 		var curseDescription = "-1 victory point";
-		var curse = new Card("curse", 0, curseDescription);
+		var curse = new Card("curse", 0, curseDescription, "img/curse.jpg");
 		curse.numberPerGame = {"1": 10, "2": 10, "3": 20, "4": 30, "5": 40, "6": 50};
 		curse.actions["onScore"] = function(player){
 										player.incrementScore(-1);
@@ -70,7 +70,7 @@
 	//Figure out how to remove cards after they are used
 	function makeEstate(){
 		var estateDescription = "1 victory point";
-		var estate = new Card("estate", 2, estateDescription);
+		var estate = new Card("estate", 2, estateDescription, "img/estate.jpg");
 		estate.numberPerGame = {"1": 8, "2": 8, "3": 12, "4": 12, "5": 12, "6": 12};
 		estate.actions["onScore"] = function(player){
 										player.incrementScore(1);
@@ -82,7 +82,7 @@
 
 	function makeDuchy(){
 		var duchyDescription = "3 victory points";
-		var duchy = new Card("duchy", 5, duchyDescription);
+		var duchy = new Card("duchy", 5, duchyDescription, "img/duchy.jpg");
 		duchy.numberPerGame = {"1": 8, "2": 8, "3": 12, "4": 12, "5": 12, "6": 12};
 		duchy.actions["onScore"] = function(player){
 										player.incrementScore(3);
@@ -94,8 +94,8 @@
 
 	function makeProvince(){
 		var provinceDescription = "6 victory points";
-		var province = new Card("province", 8, provinceDescription);
-		province.numberPerGame = {"1": 8, "2": 8, "3": 12, "4": 12, "5": 15, "6": 18};
+		var province = new Card("province", 4, provinceDescription, "img/province.jpg");
+		province.numberPerGame = {"1": 8, "2": 2, "3": 12, "4": 12, "5": 15, "6": 18};
 		province.actions["onScore"] = function(player){
 										player.incrementScore(6);
 										return true;
@@ -106,7 +106,7 @@
 
 	function makeCopper(){
 		var copperDescription = "1 coin";
-		var copper = new Card("copper", 0, copperDescription);
+		var copper = new Card("copper", 0, copperDescription, "img/copper.jpg");
 		copper.numberPerGame = {"1": 53, "2": 46, "3": 39, "4": 32, "5": 85, "6": 78};
 		copper.actions["onCoin"] = function(player){
 									   		player.incrementCoins(1);
@@ -120,7 +120,7 @@
 	//CHANGE NUMBER OF SILVERS AND GOLDS
 	function makeSilver(){
 		var silverDescription = "2 coins";
-		var silver = new Card("silver", 3, silverDescription);
+		var silver = new Card("silver", 3, silverDescription, "img/silver.jpg");
 		silver.numberPerGame = {"1": 40, "2": 40, "3": 40, "4": 40, "5": 80, "6": 80};
 		silver.actions["onCoin"] = function(player){
 									   		player.incrementCoins(2);
@@ -133,7 +133,7 @@
 
 	function makeGold(){
 		var goldDescription = "3 coins";
-		var gold = new Card("gold", 6, goldDescription);
+		var gold = new Card("gold", 6, goldDescription, "img/gold.jpg");
 		gold.numberPerGame = {"1": 30, "2": 30, "3": 30, "4": 30, "5": 60, "6": 60};
 		gold.actions["onCoin"] = function(player){
 									   		player.incrementCoins(3);
@@ -147,7 +147,7 @@
 	function makeCellar(){
 		var cellarDescription = "+1 action. Discard any number of cards. Plus one "+
 						"card per card discarded";
-		var cellar = new Card("cellar", 2, cellarDescription);
+		var cellar = new Card("cellar", 2, cellarDescription, "img/cellar.jpg");
 		cellar.actions["onAction"] = cellarOnAction;
 
 		//cardList elem = [name, id]
@@ -163,6 +163,8 @@
 				}
 			}
 			player.draw(numToDraw, true);
+			writeToLog(" ... discarding "+cardList.length+" cards");
+			writeToLog(" ... drawing "+cardList.length+" cards");
 			cellar.onObjectPlayEnd();
 		}
 
@@ -171,7 +173,7 @@
 		}
 
 		function cellarOnAction(player, index){
-			var question = "Choose the cards you want to discard"
+			var question = "Choose the cards you want to discard";
 			player.incrementActions(1);
 			player.addSelectCardsDom(question, isValidSolution, onDoneButton);
 			return true;
@@ -183,7 +185,7 @@
 
 	function makeChapel(){
 		var chapelDescription = "trash up to four cards from your hand";
-		var chapel = new Card("chapel", 2, chapelDescription);
+		var chapel = new Card("chapel", 2, chapelDescription, "img/chapel.jpg");
 		chapel.actions["onAction"] = chapelOnAction;
 
 		//cardList elem = [name, id]
@@ -196,6 +198,7 @@
 				var cardId = cardList[i][1];
 				player.removeCardFromHand(cardName, cardId, board.trash);
 			}
+			writeToLog(" ... trashing "+cardList.length+" cards");
 			chapel.onObjectPlayEnd();
 		}
 
@@ -218,19 +221,20 @@
 		var moatDescription = "+2 cards. When another player plays an attack card, "+
 					  "you may reveal this card from your hand. If you do, "+
 					  "you are unaffected by that Attack";
-		var moat = new Card("moat", 2, moatDescription);
+		var moat = new Card("moat", 2, moatDescription, "img/moat.jpg");
 		return moat;
 	}
 
 	function makeChancellor(){
 		var chancellorDescription = "+2 coin. You may immediately put your deck "+
 							"into your discard pile";
-		var chancellor = new Card("chancellor", 3, chancellorDescription);
+		var chancellor = new Card("chancellor", 3, chancellorDescription, "img/chancellor.jpg");
 		chancellor.actions["onAction"] = chancellorOnAction;
 
 		function onYes(player){
 			player.discard = player.discard.concat(player.deck);
 			player.deck = [];
+			writeToLog("... putting deck in discard");
 			chancellor.onObjectPlayEnd();
 		}
 
@@ -250,12 +254,14 @@
 		
 	function makeVillage(){
 		var villageDescription = "+1 card +2 actions";
-		var village = new Card("village", 3, villageDescription);
+		var village = new Card("village", 3, villageDescription, "img/village.jpg");
 		village.actions["onAction"] = villageOnAction;
 
 		function villageOnAction(player, index){
 			player.incrementActions(2);
-			player.draw(1, true);
+			writeToLog("... gaining 2 actions");
+			var numDrawn = player.draw(1, true);
+			if(numDrawn === 1){writeToLog("... drawing 1 card")}
 			village.onObjectPlayEnd();
 		}
 
@@ -264,14 +270,16 @@
 	}
 
 	function makeWoodcutter(){
-		var woodcutterDescription = "+1 buy +2 coin";
-		var woodcutter = new Card("woodcutter", 3, woodcutterDescription);
+		var woodcutterDescription = "+1 buy +$2";
+		var woodcutter = new Card("woodcutter", 3, woodcutterDescription, "img/woodcutter.jpg");
 		woodcutter.actions["onAction"] = woodcutterOnAction;
 
 		function woodcutterOnAction(player, index){
 			player.incrementBuys(1);
 			player.incrementCoins(2);
 			woodcutter.onObjectPlayEnd();
+			writeToLog("... gaining 1 buy");
+			writeToLog("... gaining $2");
 		}
 
 		woodcutter.hasAction = true;
@@ -280,13 +288,14 @@
 
 	function makeWorkshop(){
 		var workshopDescription = "gain a card costing up to 4";
-		var workshop = new Card("workshop", 3, workshopDescription);
+		var workshop = new Card("workshop", 3, workshopDescription, "img/workshop.jpg");
 		workshop.actions["onAction"] = workshopOnAction;
 
 		//cardList elem = [name, id]
 		function onCardClick(player, cardList){
 			var cardObj = getCurrCardObj(cardList[0])["object"];
 			cardObj.onObjectGain(player, cardObj);
+			writeToLog("... gaining a "+cardList[0]);
 			workshop.onObjectPlayEnd();
 		}
 
@@ -318,19 +327,20 @@
 							"deck. Each other player reveals a victory " + 
 							"card from his hand and puts it on his deck "+
 							"(or reveals a hand with no victory cards)";
-		var bureaucrat = new Card("bureaucrat", 4, bureaucratDescription);
+		var bureaucrat = new Card("bureaucrat", 4, bureaucratDescription, "img/bureaucrat.jpg");
 		return bureaucrat;
 	}
 
 	function makeFeast(){
 		var feastDescription = "trash this card. Gain a card costing up to 5 coins";
-		var feast = new Card("feast", 4, feastDescription);
+		var feast = new Card("feast", 4, feastDescription, "img/feast.jpg");
 		feast.actions["onAction"] = feastOnAction;
 
 		//cardList elem = [name, id]
 		function onCardClick(player, cardList){
 			var cardObj = getCurrCardObj(cardList[0])["object"];
 			cardObj.onObjectGain(player, cardObj);
+			writeToLog("... gaining a "+cardList[0]);
 			feast.onObjectPlayEnd();
 		}
 
@@ -367,7 +377,7 @@
 	function makeGardens(){
 		var gardensDescription = "worth one victory point for every 10 cards in "+
 								 "your deck (rounded down)";
-		var gardens = new Card("gardens", 4, gardensDescription);
+		var gardens = new Card("gardens", 4, gardensDescription, "img/gardens.jpg");
 		gardens.numberPerGame = {"1": 8, "2": 8, "3": 12, "4": 12, "5": 12, "6": 12};
 		gardens.actions["onScore"] = gardensOnScore;
 		
@@ -386,14 +396,14 @@
 	function makeMilitia(){
 		var militiaDescription = "+ 2 coins. Each other player discards down to "+
 								 "3 cards in his hand";
-		var militia = new Card("militia", 4, militiaDescription);
+		var militia = new Card("militia", 4, militiaDescription, "img/militia.jpg");
 		return militia;
 	}
 
 	function makeMoneylender(){
 		var moneylenderDescription = "Trash a copper from your hand. If you do "+
-									 "+3 coins";
-		var moneylender = new Card("moneylender", 4, moneylenderDescription);
+									 "+$3";
+		var moneylender = new Card("moneylender", 4, moneylenderDescription, "img/moneylender.jpg");
 		moneylender.actions["onAction"] = moneylenderOnAction;
 
 		function isValidSolution(player, cardInfo){
@@ -408,6 +418,8 @@
 		function onCardClick(player, cardInfo){
 			player.removeCardFromHand(cardInfo[0], cardInfo[1], board.trash);
 			player.incrementCoins(3);
+			writeToLog("... trashing a copper");
+			writeToLog("... gaining $3");
 			moneylender.onObjectPlayEnd();
 		}
 
@@ -426,7 +438,7 @@
 	function makeRemodel(){
 		var remodelDescription = "Trash a card from your hand. Gain a card "+
 								 "costing up to two more than the trashed card";
-		var remodel = new Card("remodel", 4, remodelDescription);
+		var remodel = new Card("remodel", 4, remodelDescription, "img/remodel.jpg");
 		remodel.actions["onAction"] = remodelOnAction;
 
 		//cardList elem = [name, id]
@@ -468,12 +480,14 @@
 
 	function makeSmithy(){
 		var smithyDescription = "+ 3 cards";
-		var smithy = new Card("smithy", 4, smithyDescription);
+		var smithy = new Card("smithy", 4, smithyDescription, "img/smithy.jpg");
 
 		smithy.actions["onAction"] = smithyOnAction;
 
 		function smithyOnAction(player, index){
-			player.draw(3, true);
+			var numDrawn = player.draw(3, true);
+			if (numDrawn === 1) {writeToLog("... drawing 1 card");}
+			if (numDrawn > 1) {writeToLog("... drawing"+numDrawn+"cards");}
 			smithy.onObjectPlayEnd();
 			return true;
 		}
@@ -486,7 +500,7 @@
 		var spyDescription = "+1 card, +1 action. Each player (including you) "+
 							 "reveals the top card of his deck and either "+
 							 "discards it or puts it back, your choice";
-		var spy = new Card("spy", 4, spyDescription);
+		var spy = new Card("spy", 4, spyDescription, "img/spy.jpg");
 		return spy;
 	}
 
@@ -496,33 +510,36 @@
 							   "trash one of them that you choose. You may "+
 							   "gain any or all of these trashed cards. "+
 							   "they discard the other revealed cards."
-		var thief = new Card("thief", 4, thiefDescription);
+		var thief = new Card("thief", 4, thiefDescription, "img/thief.jpg");
 		return thief;
 	}
 
 	function makeThroneRoom(){
 		var throneRoomDescription = "Choose an action card in your hand. "+
 									"Play it twice.";
-		var throneRoom = new Card("throne room", 4, throneRoomDescription);
+		var throneRoom = new Card("throne room", 4, throneRoomDescription, "img/throneroom.jpg");
 		return throneRoom;
 	}
 
 	function makeCouncilRoom(){
 		var councilRoomDescription = "+4 cards, +1 buy. Each other player "+
 									 "draws a card";
-		var councilRoom = new Card("council room", 5, councilRoomDescription);
+		var councilRoom = new Card("council room", 5, councilRoomDescription, "img/councilroom.jpg");
 		return councilRoom;
 	}
 
 	function makeFestival(){
 		var festivalDescription = "+2 actions, +1 buy, +2 coins";
-		var festival = new Card("festival", 5, festivalDescription);
+		var festival = new Card("festival", 5, festivalDescription, "img/festival.jpg");
 		festival.actions["onAction"] = festivalOnAction;
 
 		function festivalOnAction(player, index){
 			player.incrementActions(2);
+			writeToLog("... gaining 2 actions");
 			player.incrementBuys(1);
+			writeToLog("... gaining 1 buy");
 			player.incrementCoins(2);
+			writeToLog("... gaining $2");
 			festival.onObjectPlayEnd();
 			return true;
 		}
@@ -534,12 +551,15 @@
 
 	function makeLaboratory(){
 		var laboratoryDescription = "+2 cards, +1 action";
-		var laboratory = new Card("laboratory", 5, laboratoryDescription);
+		var laboratory = new Card("laboratory", 5, laboratoryDescription, "img/laboratory.jpg");
 		laboratory.actions["onAction"] = laboratoryOnAction;
 
 		function laboratoryOnAction(player, index){
 			player.incrementActions(1);
-			player.draw(2, true);
+			writeToLog("... gaining 1 action");
+			var numDraw = player.draw(2, true);
+			if (numDraw === 1){writeToLog("... drawing 1 card")};
+			if (numDraw > 1){writeToLog("... drawing "+numDraw+" cards")};
 			laboratory.onObjectPlayEnd();
 			return true;
 		}
@@ -555,20 +575,35 @@
 								 "You may set aside any action cards drawn "+
 								 "in this way as you drawn them; discard the "+
 								 "set aside cards after you finish drawing";
-		var library = new Card("library", 5, libraryDescription);
+		var library = new Card("library", 5, libraryDescription, "img/library.jpg");
+		library.actions["onAction"] = libraryOnAction;
+
+		function libraryOnAction(player, index){
+			var numCardsInHand = player.hand.length;
+			player.incrementBuys(1);
+			player.incrementCoins(1);
+			market.onObjectPlayEnd();
+			return true;
+		}
+
+		library.hasAction = true;
 		return library;
 	}
 
 	function makeMarket(){
 		var marketDescription = "+1 card\n"+"+1 action\n"+"+1 buy"+"+1 coin\n";
-		var market = new Card("market", 5, marketDescription);
+		var market = new Card("market", 5, marketDescription, "img/market.jpg");
 		market.actions["onAction"] = marketOnAction;
 
 		function marketOnAction(player, index){
-			player.draw(1, true);
+			var numDraw = player.draw(1, true);
+			if (numDraw === 1){writeToLog("... drawing 1 card")};
 			player.incrementActions(1);
+			writeToLog("... gaining 1 action");
 			player.incrementBuys(1);
+			writeToLog("... gaining 1 buy");
 			player.incrementCoins(1);
+			writeToLog("... gaining 1 coin");
 			market.onObjectPlayEnd();
 			return true;
 		}
@@ -581,7 +616,7 @@
 		var mineDescription = "Trash a treasure card from your hand. Gain "+
 							  "a treasure card costing up to 3 coins more; "+
 							  "put it into your hand";
-		var mine = new Card("mine", 5, mineDescription);
+		var mine = new Card("mine", 5, mineDescription, "img/mine.jpg");
 		mine.actions["onAction"] = mineOnAction;
 
 		//cardList elem = [name, id]
@@ -617,7 +652,7 @@
 
 	function makeWitch(){
 		var witchDescription = "+2 cards. Each other player gains a curse card.";
-		var witch = new Card("witch", 5, witchDescription);
+		var witch = new Card("witch", 5, witchDescription, "img/witch.jpg");
 
 		witch.actions["onAction"] = witchOnAction;
 
@@ -633,7 +668,7 @@
 									"reveal two treasure cards. Put those "+
 									"treasure cards into your hand and discard "+
 									"the other revealed cards";
-		var adventurer = new Card("adventurer", 5, adventurerDescription);
+		var adventurer = new Card("adventurer", 5, adventurerDescription, "img/adventurer.jpg");
 		adventurer.actions["onAction"] = adventurerOnAction;
 
 		function adventurerOnAction(player, index){
@@ -647,6 +682,7 @@
 				var newCard = newCardList[0];
 				var cardObj = getCurrCardObj(newCard)["object"];
 				if (cardObj.hasCoin){
+					writeToLog("... drawing a "+cardObj.name);
 					count+=1;
 					player.hand.push(newCard);
 					player.makePlayerDom();
@@ -673,12 +709,14 @@
 	 * makeAction: create an action for the card;
 	 */
 
-	 function Card(name, cost, description){
+	 function Card(name, cost, description, imgSrc){
 	 	if (name === undefined) {name = ""};
 	 	if (cost === undefined) {cost = 0};
+	 	if (imgSrc === undefined) {imgSrc = ""};
 	 	this.name = name;
 	 	this.cost = cost;
 	 	this.description = description;
+	 	this.imgSrc = imgSrc;
 	 	//Number of cards on the board at the start of the game
 	 	this.numberPerGame = {"1": 10, "2": 10, "3": 10, "4": 10, "5": 10, "6": 10};
 	 	//Make default actions empty functions
@@ -788,6 +826,7 @@
 				if(this.onObjectGain(player, cardObj)){
 					player.incrementBuys(-1);
 					player.incrementCoins(-cardObj.cost);
+					writeToLog(player.name + " buys 1 "+cardObj.name);
 				}
 			}
 			if (player.numBuys <= 0){
@@ -804,6 +843,7 @@
 								  		  player.usedCards);
 				if (player.numActions > 0){
 					player.incrementActions(-1);
+					writeToLog(player.name + " plays 1 "+cardObj.name);
 					cardObj.actions["onAction"](player, index);
 				}				
 			}
@@ -811,9 +851,10 @@
 		console.log(this.name);
 	}
 
+
 	Card.prototype.onObjectPlayEnd = function(){
 		var player = board.players[board.turn];
-		if (player.numActions <= 0){
+		if (player.numActions <= 0 || player.noActionsInHand()){
 			board.endAction();
 		}
 	}
@@ -822,6 +863,7 @@
 		if (board.possPhases[board.currentPhase] === "buy"){
 			var player = board.players[board.turn];
 			if (cardObj.hasCoin){
+				writeToLog(player.name + " plays 1 "+cardObj.name);
 				cardObj.actions["onCoin"](player);
 				player.removeCardFromHand(cardObj.name, index, 
 										  player.usedCards);
@@ -871,6 +913,22 @@
 		this.numActions = 1;
 		this.numBuys = 1;
 		this.numCoins = 0;
+	}
+
+	function writeToLog(text){
+		$("#game-info p").append(text+"<br/>");
+		$("#game-info").scrollTop($('#game-info')[0].scrollHeight);
+	}
+
+	Player.prototype.noActionsInHand = function(){
+		for (var i=0; i<this.hand.length; i++){
+			var cardDescript = getCurrCardObj(this.hand[i]);
+			var cardObj = cardDescript["object"];
+			if (cardObj.hasAction){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	Player.prototype.removeCardFromHand = function(card, index, endLoc){
@@ -955,6 +1013,7 @@
 		if (!(drawDom === false)){
 			this.makePlayerDom();
 		}
+		return newCards.length;
 	};
 
 	Player.prototype.trashCard = function(card, board){
@@ -1011,12 +1070,16 @@
 		$("#hand").empty();
 //		var cardFrag = document.createDocumentFragment();
 		for (var i=0; i<playerHand.length; i++){
-			var cardDiv = "<div class='hand-card active-card' id='"+i+"'><p>"+
-						  playerHand[i]+"</p></div>";
-			$("#hand").append(cardDiv);
+	//		var cardDiv = "<div class='hand-card active-card' id='"+i+"'><p>"+
+	//					  playerHand[i]+"</p></div>";
 			var cardDescript = getCurrCardObj(playerHand[i]);
 			if (cardDescript != null){
 				var cardObj = cardDescript["object"];
+				var cardDiv = "<div class='hand-card active-card' id='"+i+"'>"+
+							  "<span id='"+cardObj.name+"'>"+
+						  	  "<img src='"+cardObj.imgSrc+"' width='100' height='159' />"+
+						  	  "</span></div>";
+				$("#hand").append(cardDiv);
 				var cardDiv = document.getElementById(i);
 				if (cardObj.hasAction){
 					onObjectPlayHandler(cardDiv, cardObj, i);					
@@ -1039,13 +1102,13 @@
 	Player.prototype.giveYesNoChoice = function(question, onYes, onNo){
 		$(".hand-card").removeClass("active-card");
 		var player = this;
-		var questionDom = "<p id='question'>"+question+"</p>";
-		var yesDom = "<span id='yes-question'><p>Yes</p></span>";
-		var noDom = "<span id='no-question'><p>No</p></span>";
+		var questionDom = "<p id='question'>"+question+"&nbsp &nbsp &nbsp"+
+						  " <b><span id='yes-question'>Yes</span></b> &nbsp"+
+						  " <b><span id='no-question'>No</span></b></p>";
 		$("#card-effects").append(questionDom);
-		$("#card-effects").append(yesDom);
-		$("#card-effects").append(noDom);
+		$("#end-action").prop("disabled",true);
 		$("#yes-question").click(function(event){
+			$("#end-action").prop("disabled",false);
 			onYes(player);
 			$("#yes-question").unbind("click");
 			$("#no-question").unbind("click");
@@ -1055,6 +1118,7 @@
 			$(".hand-card").addClass("active-card");
 		});
 		$("#no-question").click(function(event){
+			$("#end-action").prop("disabled",false);
 			onNo(player);
 			$("#yes-question").unbind("click");
 			$("#no-question").unbind("click");
@@ -1077,11 +1141,13 @@
 		$("#card-effects").append(questionDom);
 		$(".hand-card").removeClass("active-card");
 		$("."+cardsClass).addClass("select-one-card");
+		$("#end-action").prop("disabled",true);
 		$(".select-one-card").click(function(event){
-			var cardName = getParagraphText(this.innerHTML);
+			var cardName = this.firstChild.id;
 			var cardId = this.id;
 			var cardInfo = [cardName, cardId];
 			if (checkValidSol(player, cardInfo)){
+				$("#end-action").prop("disabled",false);
 				onCardClick(player, cardInfo);
 				$(".select-one-card").unbind("click");
 				$("."+cardsClass).removeClass(".select-one-card");
@@ -1091,30 +1157,32 @@
 		})
 	}
 
+	function highlightCard(e, id){
+		$("#"+id).toggleClass("checked");
+	}
+
 	Player.prototype.addSelectCardsDom = function(question, checkValidSol, onDoneButton){
 		var questionDom = "<p id='question'>"+question+"</p>";
-		$("card-effects").append(questionDom);
+		$("#card-effects").append(questionDom);
 		$(".hand-card").removeClass("active-card");
-		var checkBox = $('<input type="checkbox" class="hand-checkbox">');
+		$(".hand-card").click(function(e){highlightCard(e, $(this).attr('id'))});
 		var doneButton = $('<button id="done-button">Done</button>');
 		var player = this;
-		$(".hand-card").append(checkBox);
 		$("#card-effects").append(doneButton);
+		$("#end-action").prop("disabled",true);
 		$("#done-button").click(function(event){
-			var allChecked = $( "input:checked" );
+			var allChecked = $( ".checked" );
 			var checkedCards = [];
 			for(var i=0; i<allChecked.length; i++){
-				var checkedDiv = allChecked[i].parentNode;
-				var elem = checkedDiv.innerHTML;
-				elem = getParagraphText(elem);
-				checkedCards.push([elem, checkedDiv.id]);
+				var elem = allChecked[i].firstChild.id;
+				checkedCards.push([elem, allChecked[i].id]);
 			}
 			if (checkValidSol(player, checkedCards)){
+				$("#end-action").prop("disabled",false);
 				onDoneButton(player, checkedCards);
 				$("#done-button").unbind("click");
-				$(".hand-checkbox").unbind("click");
+				$(".hand-card").removeClass("checked");
 				$("#done-button").remove();
-				$(".hand-checkbox").remove();
 				$("#question").remove();
 				$(".hand-card").addClass("active-card");
 			}			
@@ -1139,7 +1207,7 @@
 		this.possPhases = ["action", "buy"];
 		this.currentPhase = 0;
 		//Generates an array of 10 cards
-		this.kingdomCards = this.generateCards(25);
+		this.kingdomCards = this.generateCards(10);
 		this.supplyCards = this.createSupplyCards();
 		this.trash = [];
 	}
@@ -1166,7 +1234,10 @@
 			$("#end-turn").html("End Action");
 			$("#end-turn").prop("id", "end-action");
 			$("#player-name").html(board.players[board.turn].name);
-			printDecks(board.players[board.turn]);
+			writeToLog("<br/>--- " + board.players[board.turn].name + "'s Turn ---");
+			if (board.players[board.turn].noActionsInHand()){
+				board.endAction();
+			}
 		}
 	}
 
@@ -1189,12 +1260,14 @@
 		var currCardObj;
 		var currCard;
 		var newHand = [];
+		var coins = {"copper": 0, "silver": 0, "gold": 0, "platinum": 0};
 		for (var i=0; i<currPlayer.hand.length; i++){
 			currCard = currPlayer.hand[i]
 			currCardDescript = getCurrCardObj(currCard);
 			if (currCardDescript != null){
 				currCardObj = currCardDescript["object"];
 				if (currCardObj.isBasicCoin){
+					coins[currCardObj.name]+=1;
 					currCardObj.actions["onCoin"](currPlayer);
 					currPlayer.usedCards.push(currCard);
 				}
@@ -1202,6 +1275,11 @@
 					newHand.push(currCard);
 				}
 			}
+		}
+		for(var coin in coins){
+			if(coins[coin] && coins[coin] > 0){
+				writeToLog(currPlayer.name + " plays "+coins[coin]+" "+coin);
+			} 
 		}
 		$(".basic-coin").remove();
 		currPlayer.hand = newHand;
@@ -1225,13 +1303,18 @@
 	 * 
 	 */
 	Board.prototype.generateCards = function(numCardsToGenerate){
+		for (var i = kingdomCardList.length-1; i > 0; i--){
+			var j = Math.floor(Math.random()*(i+1));
+			var temp = kingdomCardList[j];
+			kingdomCardList[j] = kingdomCardList[i];
+			kingdomCardList[i] = temp;
+		}
 		var cardNames = kingdomCardList.slice(0,numCardsToGenerate);
 		var cardObject = {};
 		for (var i=0; i<cardNames.length; i++){
 			cardObject[cardNames[i]] = makeCardInfo(cardNames[i], 
 									   this.players.length);
 		}
-		console.log(cardObject);
 		return cardObject;
 	}
 
@@ -1302,10 +1385,15 @@
 				}
 			}
 			if (superiorWinners.length > 0){
-				return superiorWinners;
+				winners = superiorWinners;
 			}
 		}
 
+		var printWinner = "<br/> --- Winners: "
+		for (var i=0; i<winners.length; i++){
+			printWinner += winners[i].name+", "
+		}
+		writeToLog(printWinner.substring(0, printWinner.length-1)+" ---");
 		return winners;
 
 	}
@@ -1341,15 +1429,17 @@
 
 	function makeBoardDom(){
 		var playerName = board.players[board.turn].name;
-		$("#player-name").text(playerName);
+		writeToLog("<br/>--- " + playerName + "'s Turn ---");
 		var kingdomCards = board.kingdomCards;
 		var supplyCards = board.supplyCards;
 //		var cardFrag = document.createDocumentFragment();
 		for (var supplyCard in board.supplyCards){
-			var cardDiv = "<div class='card' id='"+supplyCard+"'><p>"+supplyCard+
-						  "</p></div>";
-			$("#supply-cards").append(cardDiv);
 			var cardObj = board.supplyCards[supplyCard]["object"];
+			var cardDiv = "<div class='card' id='"+supplyCard+"'>"+
+						  "<span id='"+cardObj.name+"'>"+
+						   "<img src='"+cardObj.imgSrc+"' width='80' height='127' /></span></div>";
+			$("#"+supplyCard).css("background-image", "url("+cardObj.imgSrc+")");
+			$("#supply-cards").append(cardDiv);
 			var cardDiv = document.getElementById(supplyCard);
 			createOnObjectBuyHandler(cardDiv, cardObj);
 			createAddInfoTextHandler(cardDiv, cardObj);
@@ -1359,10 +1449,11 @@
 			//$("#"+supplyCard).hover(cardObj.addInfoText, cardObj.removeInfoText);
 		}
 		for (var kingdomCard in board.kingdomCards){
-			var cardDiv = "<div class='card' id='"+kingdomCard+"'><p>"+kingdomCard+
-						  "</p></div>";
-			$("#kingdom-cards").append(cardDiv);
 			var cardObj = board.kingdomCards[kingdomCard]["object"];
+			var cardDiv = "<div class='card' id='"+kingdomCard+"'>"+
+						  "<span id='"+cardObj.name+"'>"+
+						  "<img src='"+cardObj.imgSrc+"' width='100' height='159' /></span></div>";
+			$("#kingdom-cards").append(cardDiv);
 			var cardDiv = document.getElementById(kingdomCard);
 			createOnObjectBuyHandler(cardDiv, cardObj);
 			createAddInfoTextHandler(cardDiv, cardObj);
@@ -1371,7 +1462,10 @@
 			});
 			//$("#"+kingdomCard).hover(cardObj.addInfoText, cardObj.removeInfoText);
 
-		}		
+		}
+		if (board.players[board.turn].noActionsInHand()){
+			board.endAction();
+		}
 	}
 
 	//Players will be an array of players... Dunno how that will be generated
@@ -1410,10 +1504,26 @@
    		var board = new Board(0, playerArray);
 		return board;	
 	}
+/*
+	function createStartPopup(){
+   		$( "#slider" ).slider({
+    		value:2,
+     		min: 1,
+      		max: 6,
+     		step: 1,
+      		slide: function( event, ui ) {
+        		$( "#amount" ).val( "$" + ui.value );
+      		}
+    	});
+    	$( "#player-number" ).val( "$" + $( "#slider" ).slider( "value" ) );
+  });
 
+	}
+*/
 	window.onload = function(){
 	//	var dominionModule = angular.module('dominionApp', []);
-		board = init(["player 1"]);
+//		createStartPopup();
+		board = init(["player 1", "player 2"]);
 		makeBoardDom();
 		board.players[board.turn].makePlayerDom();
 //		var finalObjArray = runGame(objArray);

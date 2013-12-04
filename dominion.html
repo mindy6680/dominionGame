@@ -28,35 +28,48 @@
 
         <div class="main-container">
             <div class="main wrapper clearfix">
-                <h1>Dominion Board</h1>
-                <div id="dominion-test">
-                    <div id="player-name"></div>
-                    <div id="dominion-board">
-                        <div id='popup'>
-                            <span id="popup-close"><p>X</p></span>
-                            <span id='popup-text'></span>
+             <!--   <h1>Dominion Board</h1> -->
+                <div id="dominion-board">
+                    <div id='popup'>
+                        <span id="popup-close"><p>X</p></span>
+                        <span id='popup-text'></span>
+                    </div>
+                    <div id="supply-cards"></div>
+                    <div id="kingdom-cards"></div>
+                    <div id="user">
+                        <div id="game-info">
+                            <p></p>
                         </div>
-                        <div id="kingdom-cards"></div>
-                        <div id="supply-cards"></div>
-                        <div id="buttons">
-                            <button id="end-action">End action</button>
-                            <button id="play-coins">Play Coins</button>
+                        <div id="user-info">
                             <div id="info">
-                                <p>Actions: <span id="num-actions"></span></p>
-                                <p>Buys: <span id="num-buys"></span></p>
-                                <p>Coins <span id="num-coins"></span></p>
+                          <!--      <p><span id="player-name"></span></p>   -->
+                                <p>Actions: <b><span class="info-info" id="num-actions"></span></b>
+                                <br/>Buys: <b><span class="info-info" id="num-buys"></span></b>
+                                <br/>Coins: <b><span class="info-info" id="num-coins"></span></p></b>
                             </div>
-                            <div id="card-effects">
+                            <div id="buttons">
+                                <button id="end-action">End action</button>
+                                <button id="play-coins">Play Coins</button>
                             </div>
+                        </div>
+                        <div id="card-effects">
                         </div>
                         <div id="hand">
-                            <p>HAND</p>
                         </div>
                     </div>
                 </div>
             </div> <!-- #main -->
         </div> <!-- #main-container -->
-
+<!--
+        <div id="startGameDialog">
+            <table class="formTable">
+                <tr>
+                    <td class="formLabel">Number of Players</td>
+                    <td class="formField"><input type="text" id="player-number"></td>
+                </tr>
+            </table>
+        </div>
+-->
 <!--
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
