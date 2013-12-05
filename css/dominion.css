@@ -180,6 +180,7 @@
 	-moz-transition: all 0.1s ease; 
 	-o-transition: all 0.1s ease; 
 	color: rgba(57, 147, 252, 100);
+	cursor: pointer;
 }
 
 .checked, .select-one-card:hover, .select-card:hover{
