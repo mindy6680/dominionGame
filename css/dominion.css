@@ -1,3 +1,13 @@
+#start-screen{
+	display: none;
+	position: absolute;
+}
+
+#end-screen{
+	display: none;
+	position: absolute;
+}
+
 #dominion-board{
 	position: relative;
 	margin-left: auto;
@@ -82,14 +92,17 @@
 	font-size: 12px; 
 	width: 135px;
 	background: white;
+	cursor: pointer;
+}
+
+#user-info{
+	text-align: center;
 }
 
 #info{
-	float: left;
 	top: 10px;
 	left: 20px;
 	position: relative;
-	width: 80px;
 }
 
 .info-info{
@@ -116,17 +129,13 @@
 }
 
 #buttons{
-	width: 100px;
+	width: 110px;
 	height: 30px;
 	left: 20px;
 	position: relative;
 	top: 10px;
 	float: left;
 	clear: both;
-}
-
-#play-coins{
-	margin-top: 5px;
 }
 
 #user{
@@ -162,20 +171,147 @@
 	}
 }
 
-.checked, .select-one-card:hover{
+#yes-question, #no-question{
+	cursor: pointer;
+}
+
+#yes-question:hover, #no-question:hover, .player-num:hover, .button:hover, .button-special:hover{
+	-webkit-transition: all 0.1s ease; 
+	-moz-transition: all 0.1s ease; 
+	-o-transition: all 0.1s ease; 
+	color: rgba(57, 147, 252, 100);
+}
+
+.checked, .select-one-card:hover, .select-card:hover{
 	-webkit-transition: all 0.1s ease; 
 	-moz-transition: all 0.1s ease; 
 	-o-transition: all 0.1s ease; 
 	 outline: 5px solid #FC1717;
 }
 
-#yes-question, #no-question{
-	cursor: pointer;
+#end-screen{
+	width: 890px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
-#yes-question:hover, #no-question:hover{
-	-webkit-transition: all 0.1s ease; 
-	-moz-transition: all 0.1s ease; 
-	-o-transition: all 0.1s ease; 
-	color: rgba(57, 147, 252, 100);
+#end-screen-results{
+	float: left;
+	position: relative;
+	top: 98px;
+	left: 50px;
+	height: 300px;
+	margin-right: 160px;
+	width: 225px;
+	text-align: center;
+}
+
+#final-log{
+	float: left;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	position: relative;
+	top: 20px;
+	width: 500px;
+	border: 1px solid gray;
+	height: 400px;
+}
+
+#final-log p{
+	left: 20px;
+	position: relative;
+}
+
+.button, .player-num {
+	background-color:#fafafa;
+	-moz-border-radius:7px;
+	-webkit-border-radius:7px;
+	border-radius:7px;
+	border:1px solid #afccb2;
+	display:inline-block;
+	cursor:pointer;
+	color:#2b2a2b;
+	font-family:Arial;
+	font-size:18px;
+	padding:5px 15px;
+	text-decoration:none;
+}
+.button:hover, .player-num:hover {
+	background-color:#f0f0f0;
+}
+.button:active, .player-num:active {
+	position:relative;
+	top:1px;
+}
+
+#start-game{
+	position: relative;
+	top: 28px;
+	clear: both;
+}
+
+#start-screen{
+	text-align: center;
+	display: block;
+	width: 300px;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	height: 300px;
+}
+
+#start-screen h1{
+	margin-bottom: 34px;
+	margin-top: 65px;
+}
+
+.button-special {
+	background-color:#fafafa;
+	-moz-border-radius:7px;
+	-webkit-border-radius:7px;
+	border-radius:7px;
+	border:1px solid #afccb2;
+	display:inline-block;
+	cursor:pointer;
+	color:#2b2a2b;
+	font-family:Arial;
+	font-size:16px;
+	padding:5px 15px;
+	text-decoration:none;
+}
+.button-special:hover {
+	background-color:#f0f0f0;
+}
+.button-special:active {
+	position:relative;
+	top:1px;
+}
+
+.red-circle{
+	-webkit-border-radius: 999px;
+	-moz-border-radius: 999px;
+	border-radius: 999px;
+	width: 15px;
+	height: 15px;
+	background: red;
+}
+
+.button-special, .button-disabled{
+	margin-top: 5px;
+}
+
+.button-disabled{
+	background-color:#ffffff;
+	-moz-border-radius:7px;
+	-webkit-border-radius:7px;
+	border-radius:7px;
+	border:1px solid #d9d9d9;
+	display:inline-block;
+	cursor:pointer;
+	color:#b3b3b3;
+	font-family:Arial;
+	font-size:16px;
+	padding:5px 15px;
+	text-decoration:none;
+	cursor: default;
 }

@@ -29,16 +29,37 @@
         <div class="main-container">
             <div class="main wrapper clearfix">
              <!--   <h1>Dominion Board</h1> -->
-                <div id="dominion-board">
-                    <div id='popup'>
-                        <span id="popup-close"><p>X</p></span>
-                        <span id='popup-text'></span>
+                <div id='start-screen'>
+                    <h1>Dominion</h1>
+                    <div id="player-num-list">
+                    <p>Number of Players:</p>
+                    <p>
+                        <span class="player-num"> 1 </span> &nbsp
+                        <span class="player-num"> 2 </span> &nbsp
+                        <span class="player-num"> 3 </span>
+                    </p>
+                    <p>
+                        <span class="player-num"> 4 </span> &nbsp
+                        <span class="player-num"> 5 </span> &nbsp
+                        <span class="player-num"> 6 </span>
+                    </p>
                     </div>
+                </div>
+                <div id='end-screen'>
+                    <div id="end-screen-results">
+                        <h1>Game Over</h1>
+                        <p><b><span id="results"></span></b></p>
+                        <div id="play-again" class="button">Play Again</div>
+                    </div>
+                    <div id="final-log"></div>
+                </div>
+                <div id="dominion-board">
                     <div id="supply-cards"></div>
                     <div id="kingdom-cards"></div>
                     <div id="user">
                         <div id="game-info">
-                            <p></p>
+                            <p>
+                            </p>
                         </div>
                         <div id="user-info">
                             <div id="info">
@@ -48,14 +69,19 @@
                                 <br/>Coins: <b><span class="info-info" id="num-coins"></span></p></b>
                             </div>
                             <div id="buttons">
-                                <button id="end-action">End action</button>
-                                <button id="play-coins">Play Coins</button>
+                                <div id="end-action" class="button-special">End action</div>
+                                <div id="play-coins" class="button-special">Play Coins</div>
+                                <div id="end-game" class="button-special">End game</div>
                             </div>
                         </div>
                         <div id="card-effects">
                         </div>
                         <div id="hand">
                         </div>
+                    </div>
+                    <div id='popup'>
+                        <span id="popup-close"><p>X</p></span>
+                        <span id='popup-text'></span>
                     </div>
                 </div>
             </div> <!-- #main -->

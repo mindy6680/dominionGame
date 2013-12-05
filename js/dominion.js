@@ -95,7 +95,7 @@
 	function makeProvince(){
 		var provinceDescription = "6 victory points";
 		var province = new Card("province", 4, provinceDescription, "img/province.jpg");
-		province.numberPerGame = {"1": 8, "2": 2, "3": 12, "4": 12, "5": 15, "6": 18};
+		province.numberPerGame = {"1": 8, "2": 2, "3": 3, "4": 12, "5": 15, "6": 18};
 		province.actions["onScore"] = function(player){
 										player.incrementScore(6);
 										return true;
@@ -801,7 +801,7 @@
 		el.style.position = "absolute";
 		var infoText = cardObj.generateInfoText();
 		document.getElementById('popup-text').innerHTML = infoText;	
-		$("#popup-close").click(this.removeInfoText);
+		$("#popup").click(this.removeInfoText);
 	}
 
 	Card.prototype.onObjectGain = function(player, cardObj){
@@ -1049,7 +1049,7 @@
 	}
 
 	function onObjectPlayHandler(cardDiv, cardObj, index){
-		cardDiv.addEventListener("click", function(e){
+		$("#"+cardDiv.id).click(function(e){
 			if ($("#"+index).hasClass("active-card")){
 				cardObj.onObjectPlay(e, cardObj, index);
 			}
@@ -1057,7 +1057,7 @@
 	}
 
 	function onObjectCoinHandler(cardDiv, cardObj, index){
-		cardDiv.addEventListener("click", function(e){
+		$("#"+cardDiv.id).click(function(e){
 			cardObj.onObjectCoin(e, cardObj, index);
 		})
 	}
@@ -1107,8 +1107,12 @@
 						  " <b><span id='no-question'>No</span></b></p>";
 		$("#card-effects").append(questionDom);
 		$("#end-action").prop("disabled",true);
+		$("#end-action").removeClass("button-special");
+		$("#end-action").addClass("button-disabled");
 		$("#yes-question").click(function(event){
 			$("#end-action").prop("disabled",false);
+			$("#end-action").addClass("button-special");
+			$("#end-action").removeClass("button-disabled");
 			onYes(player);
 			$("#yes-question").unbind("click");
 			$("#no-question").unbind("click");
@@ -1119,6 +1123,8 @@
 		});
 		$("#no-question").click(function(event){
 			$("#end-action").prop("disabled",false);
+			$("#end-action").addClass("button-special");
+			$("#end-action").removeClass("button-disabled");
 			onNo(player);
 			$("#yes-question").unbind("click");
 			$("#no-question").unbind("click");
@@ -1142,15 +1148,19 @@
 		$(".hand-card").removeClass("active-card");
 		$("."+cardsClass).addClass("select-one-card");
 		$("#end-action").prop("disabled",true);
+		$("#end-action").removeClass("button-special");
+		$("#end-action").addClass("button-disabled");
 		$(".select-one-card").click(function(event){
 			var cardName = this.firstChild.id;
 			var cardId = this.id;
 			var cardInfo = [cardName, cardId];
 			if (checkValidSol(player, cardInfo)){
 				$("#end-action").prop("disabled",false);
+				$("#end-action").addClass("button-special");
+				$("#end-action").removeClass("button-disabled");
 				onCardClick(player, cardInfo);
 				$(".select-one-card").unbind("click");
-				$("."+cardsClass).removeClass(".select-one-card");
+				$("."+cardsClass).removeClass("select-one-card");
 				$("#question").remove();
 				$(".hand-card").addClass("active-card");
 			}
@@ -1165,20 +1175,27 @@
 		var questionDom = "<p id='question'>"+question+"</p>";
 		$("#card-effects").append(questionDom);
 		$(".hand-card").removeClass("active-card");
-		$(".hand-card").click(function(e){highlightCard(e, $(this).attr('id'))});
+		$(".hand-card").addClass("select-card");
+		$(".select-card").click(function(e){highlightCard(e, $(this).attr('id'))});
 		var doneButton = $('<button id="done-button">Done</button>');
 		var player = this;
 		$("#card-effects").append(doneButton);
 		$("#end-action").prop("disabled",true);
+		$("#end-action").removeClass("button-special");
+		$("#end-action").addClass("button-disabled");
 		$("#done-button").click(function(event){
-			var allChecked = $( ".checked" );
+			var allChecked = $(".checked");
 			var checkedCards = [];
 			for(var i=0; i<allChecked.length; i++){
 				var elem = allChecked[i].firstChild.id;
 				checkedCards.push([elem, allChecked[i].id]);
 			}
 			if (checkValidSol(player, checkedCards)){
+				$(".select-card").unbind();
+				$(".hand-card").removeClass("select-card");
 				$("#end-action").prop("disabled",false);
+				$("#end-action").addClass("button-special");
+				$("#end-action").removeClass("button-disabled");
 				onDoneButton(player, checkedCards);
 				$("#done-button").unbind("click");
 				$(".hand-card").removeClass("checked");
@@ -1215,6 +1232,7 @@
 	Board.prototype.endAction = function(){
 		board.currentPhase = 1;
 		$("#play-coins").show();
+		$("#end-game").show();
 		$("#end-action").html("End Turn");
 		$("#end-action").prop("id", "end-turn");
 	}
@@ -1231,6 +1249,7 @@
 			board.turn = (board.turn+1)%board.players.length;
 			board.players[board.turn].makePlayerDom();
 			$("#play-coins").hide();
+			$("#end-game").hide();
 			$("#end-turn").html("End Action");
 			$("#end-turn").prop("id", "end-action");
 			$("#player-name").html(board.players[board.turn].name);
@@ -1366,38 +1385,92 @@
 				}
 			}
 			if (player.score > maxScore){
-				winners = [player];
-				maxScore = player.score
+				winners = [player.name];
+				maxScore = player.score;
 			}
 			else if (player.score === maxScore){
-				winners.push(player);
+				winners.push(player.name);
 			}
 		}
 
 		if (winners.length > 1){
 			var currentIndex = board.turn;
-			var superiorWinners = []
+			var superiorWinners = {};
+			var count = 0;
 			for (var i=board.turn+1; i<board.players.length; i++){
 				for (var j=0; j<winners.length; j++){
-					if (board.players[i].name === winners[i].name){
-						superiorWinners.push(board.players[i]);
+					if (board.players[i].name === winners[j]){
+						superiorWinners[winners[j]] = true;
+						count += 1;
 					}
 				}
 			}
-			if (superiorWinners.length > 0){
-				winners = superiorWinners;
+			if (count > 0){
+				var keys = [];
+				for(var k in superiorWinners){
+					keys.push(k);
+				} 
+				winners = keys;
 			}
 		}
 
-		var printWinner = "<br/> --- Winners: "
+		var printWinner = ""
 		for (var i=0; i<winners.length; i++){
-			printWinner += winners[i].name+", "
+			printWinner += winners[i]+", "
 		}
-		writeToLog(printWinner.substring(0, printWinner.length-1)+" ---");
-		return winners;
-
+		writeToLog("<br/> --- Winners: " + 
+					printWinner.substring(0, printWinner.length-2)+" ---");
+		endScreen(printWinner.substring(0, printWinner.length-2), winners.length);
 	}
 
+	function endScreen(winners, numVictors){
+		if (numVictors > 1){
+			$("#end-screen #results").text("Tie between "+winners);
+		}
+		else{
+			$("#end-screen #results").text("Winner is "+winners);
+		}
+		var logText = $("#game-info").html();
+		$("#final-log").html("<p><b>Final Game Log</b></p>"+logText);
+		$("#end-screen").show();
+		$("#dominion-board").hide();
+		$("#play-again").click(function(e){
+			$("#end-screen").hide();
+			$("#dominion-board").show();
+			startScreen();
+		});
+	}
+
+
+	function startScreen(){
+		$("#start-screen").show();
+		$("#player-num-list").show();
+		$("#dominion-board").hide();
+		$(".player-num").click(function(e){
+			var numPlayers = parseInt(this.innerHTML);
+			for (var i=0; i<numPlayers; i++){
+				var textbox = "<input class='username' type='text' value='player "+(i+1)+"'></input>";
+				$("#start-screen").append(textbox);
+			}
+			var button = "<span id='start-game' class='button'><p>Start Game</p></span>";
+			$("#start-screen").append(button);
+			$(".player-num").unbind();
+			$("#player-num-list").hide();
+			$("#start-game").click(function(e){
+				var users = [];
+				$("#start-screen .username").each(function(){
+					users.push($(this).val());
+				})
+				$("#start-game").unbind();
+				$(".username").remove();
+				$("#start-game").remove();
+				$("#start-screen").hide();
+				$("#dominion-board").show();
+				startGame(users);
+			})
+		})
+
+	}
 
 	function startDrawingGame(playerArray, dominionBoard){
 		for (var i=0; i<playerArray.length; i++){
@@ -1433,6 +1506,8 @@
 		var kingdomCards = board.kingdomCards;
 		var supplyCards = board.supplyCards;
 //		var cardFrag = document.createDocumentFragment();
+		$("#supply-cards").empty();
+		$("#kingdom-cards").empty();
 		for (var supplyCard in board.supplyCards){
 			var cardObj = board.supplyCards[supplyCard]["object"];
 			var cardDiv = "<div class='card' id='"+supplyCard+"'>"+
@@ -1468,9 +1543,23 @@
 		}
 	}
 
+	function unbindEventHandlers(){
+		$(".card").unbind();
+		$(".hand-card").unbind();
+		$("#play-coins").unbind();
+		$("#end-action").unbind();
+		$("#end-turn").unbind();
+		$("body").off();
+		$("#popup-close").unbind();
+		$("#play-again").unbind();
+		$("#popup").unbind();
+		$("#end-game").unbind();
+	}
+
 	//Players will be an array of players... Dunno how that will be generated
 	function init(playerNames){
 		var playerArray = [];
+		unbindEventHandlers();
 		//Needs to be changed for dark ages
 		//Add the players to the array
 		for (var i=0; i<playerNames.length; i++){
@@ -1487,10 +1576,13 @@
 			newPlayer.draw(5, false);
 			playerArray.push(newPlayer);
 		}
-		var playCoins = document.getElementById("play-coins");
-		playCoins.addEventListener("click", function(e){
+		$("#end-game").click(function(e){
+			board.calculateVictor();
+		})
+		$("#play-coins").click(function(e){
 				board.playCoinsButton(e)});
 		$("#play-coins").hide();
+		$("#end-game").hide();
 		$("body").on('click', '#end-action, #end-turn', function(e){
     		switch (this.id) {
        	 		case 'end-turn':
@@ -1501,6 +1593,7 @@
             		break;
    			}
    		});
+   		$("#game-info p").empty();
    		var board = new Board(0, playerArray);
 		return board;	
 	}
@@ -1520,16 +1613,14 @@
 
 	}
 */
-	window.onload = function(){
-	//	var dominionModule = angular.module('dominionApp', []);
-//		createStartPopup();
-		board = init(["player 1", "player 2"]);
+	function startGame(users){
+		board = init(users);
 		makeBoardDom();
 		board.players[board.turn].makePlayerDom();
-//		var finalObjArray = runGame(objArray);
-//		var winner = calculateScore(finalObjArray);
-//		displayWinner(winner);
+	}
 
+	window.onload = function(){
+		startScreen();
 	}
 	/////////////////////////////////////////////////////////////////////////
 
